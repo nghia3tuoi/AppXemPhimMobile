@@ -8,30 +8,46 @@ import { NativeBaseProvider } from "native-base";
 import MovieDetailScreen from "./src/features/MovieDetailScreen";
 import ListMoviesScreen from "./src/features/ListMoviesScreen";
 import ViewMovieSreen from "./src/features/ViewMovieScreen";
-
-const Stack = createStackNavigator();
-
+import "./src/config/firebaseConfig";
+import Toast from "react-native-toast-message";
+import { Provider } from "react-redux";
+import store from "./src/core/store";
+export type RootStackParamList = {
+  HomeScreen: any;
+  LoginScreen:any;
+  RegisterScreen:any;
+  ForgetPasswordScreen:any;
+  ListMoviesScreen:any;
+  MovieDetailScreen:any;
+  ViewMovieSreen:any;
+};
+const Stack = createStackNavigator<RootStackParamList>();
 export default function App() {
   return (
-    <NativeBaseProvider>
-      <NavigationContainer>
-        <Stack.Navigator screenOptions={{ headerShown: false }}>
-          <Stack.Screen name="LoginScreen" component={LoginScreen} />
-          <Stack.Screen name="RegisterScreen" component={RegisterScreen} />
-          <Stack.Screen
-            name="ForgetPasswordScreen"
-            component={ForgetPassword}
-          />
-          <Stack.Screen name="HomeScreen" component={HomeScreen} />
-          <Stack.Screen name="ListMoviesScreen" component={ListMoviesScreen} />
-          <Stack.Screen
-            name="MovieDetailScreen"
-            component={MovieDetailScreen}
-          />
-
-          <Stack.Screen name="ViewMovieSreen" component={ViewMovieSreen} />
-        </Stack.Navigator>
-      </NavigationContainer>
-    </NativeBaseProvider>
+    <Provider store={store}>
+      <NativeBaseProvider>
+        <NavigationContainer>
+          <Stack.Navigator screenOptions={{ headerShown: false }}>
+            <Stack.Screen name="LoginScreen" component={LoginScreen} />
+            <Stack.Screen name="RegisterScreen" component={RegisterScreen} />
+            <Stack.Screen
+              name="ForgetPasswordScreen"
+              component={ForgetPassword}
+            />
+            <Stack.Screen name="HomeScreen" component={HomeScreen} />
+            <Stack.Screen
+              name="ListMoviesScreen"
+              component={ListMoviesScreen}
+            />
+            <Stack.Screen
+              name="MovieDetailScreen"
+              component={MovieDetailScreen}
+            />
+            <Stack.Screen name="ViewMovieSreen" component={ViewMovieSreen} />
+          </Stack.Navigator>
+          <Toast />
+        </NavigationContainer>
+      </NativeBaseProvider>
+    </Provider>
   );
 }

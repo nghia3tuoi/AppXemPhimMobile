@@ -10,15 +10,16 @@ import {
   FlatList,
 } from "react-native";
 import Colors from "../utils/Colors";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Carousel from "react-native-reanimated-carousel";
 import HeaderComponent from "../shared/components/HeaderComponent";
 import FooterComponent from "../shared/components/FooterComponent";
+import { useSelector } from "react-redux";
 
 export default function HomeScreen({ navigation }: any) {
   const screenWidth = Dimensions.get("window").width; // Lấy chiều rộng màn hình
   const [selectedTab, setSelectedTab] = useState("series");
-
+  const selectUser = useSelector((state: any) => state?.auth?.user);
   const movies = [
     {
       id: 1,
@@ -63,6 +64,11 @@ export default function HomeScreen({ navigation }: any) {
         "https://image.motchilltv.my/motchill/luu-thuy-dieu-dieu-x350.webp",
     },
   ];
+  useEffect(()=>{
+    if(selectUser === null) {
+      return navigation.navigate("HomeScreen");
+    }
+  },[])
   const handleSelectedTab = (type: string) => {
     setSelectedTab(type);
   };

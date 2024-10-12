@@ -15,8 +15,10 @@ import Colors from "../utils/Colors";
 import React, { useState } from "react";
 import CheckBox from "expo-checkbox";
 import { Formik } from "formik";
+import useAuth from "../core/hooks/useAuth";
 export default function RegisterScreen({navigation}:any) {
   const [passwordVisible, setPasswordVisible] = useState(true);
+  const {register} = useAuth();
   const handleToggleVisiblePassword = (): void => {
     setPasswordVisible(!passwordVisible);
   };
@@ -58,7 +60,7 @@ export default function RegisterScreen({navigation}:any) {
                 email: "",
                 password: "",
                 passwordConfirm: "",
-                remember: false,
+              
               }}
               validate={(values:any) => {
                 const errors: any = {};
@@ -97,7 +99,8 @@ export default function RegisterScreen({navigation}:any) {
                 return errors;
               }} // Giá trị ban đầu cho form
               onSubmit={(values: any) => {
-                console.log(values); // Xử lý đăng nhập hoặc logic khác khi form submit
+                const {email, password, passwordConfirm} = values;
+                register(email, password, passwordConfirm);
               }}
             >
               {({

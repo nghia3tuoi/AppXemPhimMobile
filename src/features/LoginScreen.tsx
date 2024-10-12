@@ -12,13 +12,41 @@ import {
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import Colors from "../utils/Colors";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import CheckBox from "expo-checkbox";
 import { Formik } from "formik";
-export default function LoginScreen({navigation}:any) {
+import useAuth from "../core/hooks/useAuth";
+import useAsyncStoreRage from "../core/hooks/useAsyncStoreRage";
+import { useSelector } from "react-redux";
+import useAuth2 from "../core/hooks/useAuth2";
+
+export default function LoginScreen({ navigation }: any) {
   const [passwordVisible, setPasswordVisible] = useState(true);
+  const [isRemember, setIsRemember] = useState(false);
+  const [loginAsyncStoreRage, setLoginAsyncStoreRage] = useState<any>();
+  const { login } = useAuth();
+  const { getLogin } = useAsyncStoreRage();
+  const { promptAsync } = useAuth2();
+  const selectUser = useSelector((state: any) => state?.auth?.user);
+  //
+  useEffect(() => {
+    handleGetLoginStoreRage();
+  }, []);
+  //
+  const handleLogin = async (values: any) => {
+    const { email, password } = values;
+    const response = await login(email, password, isRemember);
+    console.log(selectUser);
+    if (response !== null) {
+      return navigation.navigate("HomeScreen");
+    }
+  };
   const handleToggleVisiblePassword = (): void => {
     setPasswordVisible(!passwordVisible);
+  };
+  const handleGetLoginStoreRage = async () => {
+    const login = await getLogin();
+    setLoginAsyncStoreRage(login);
   };
   return (
     <View
@@ -54,7 +82,11 @@ export default function LoginScreen({navigation}:any) {
             }}
           >
             <Formik
-              initialValues={{ email: "", password: "", remember: false }} // Giá trị ban đầu cho form
+              initialValues={{
+                email: loginAsyncStoreRage?.email.toString(),
+                password: loginAsyncStoreRage?.password.toString(),
+              }} // Giá trị ban đầu cho form
+              enableReinitialize
               validate={(values: any) => {
                 const errors: any = {};
                 if (!values.email) {
@@ -77,8 +109,8 @@ export default function LoginScreen({navigation}:any) {
                 }
                 return errors;
               }}
-              onSubmit={(values: any) => {
-                console.log(values); // Xử lý đăng nhập hoặc logic khác khi form submit
+              onSubmit={async (values: any) => {
+                await handleLogin(values);
               }}
             >
               {({
@@ -213,11 +245,20 @@ export default function LoginScreen({navigation}:any) {
                         gap: 5,
                       }}
                     >
-                      <CheckBox />
-                      <Text style={{ color: Colors.textWhite }}>Ghi nhớ</Text>
+                      <CheckBox
+                        value={isRemember}
+                        onValueChange={() => setIsRemember(!isRemember)}
+                      />
+                      <Text style={{ color: Colors.textWhite, fontSize: 16 }}>
+                        Ghi nhớ
+                      </Text>
                     </TouchableOpacity>
-                    <TouchableOpacity onPress={()=>navigation.navigate('ForgetPasswordScreen')}>
-                      <Text style={{ color: Colors.primary }}>
+                    <TouchableOpacity
+                      onPress={() =>
+                        navigation.navigate("ForgetPasswordScreen")
+                      }
+                    >
+                      <Text style={{ color: Colors.primary, fontSize: 16 }}>
                         Quên mật khẩu
                       </Text>
                     </TouchableOpacity>
@@ -247,7 +288,12 @@ export default function LoginScreen({navigation}:any) {
                   >
                     Or Login Method Other:
                   </Text>
-                  <TouchableOpacity style={{ marginBottom: 16 }}>
+                  <TouchableOpacity
+                    style={{ marginBottom: 16 }}
+                    onPress={async () => {
+                      await promptAsync();
+                    }}
+                  >
                     <View
                       style={{
                         flexDirection: "row",
@@ -267,7 +313,9 @@ export default function LoginScreen({navigation}:any) {
                       </Text>
                     </View>
                   </TouchableOpacity>
-                  <TouchableOpacity onPress={()=>navigation.navigate('RegisterScreen')}>
+                  <TouchableOpacity
+                    onPress={() => navigation.navigate("RegisterScreen")}
+                  >
                     <Text
                       style={{
                         color: Colors.primary,
