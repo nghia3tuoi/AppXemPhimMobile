@@ -1,14 +1,4 @@
-import {
-  Keyboard,
-  TouchableWithoutFeedback,
-  View,
-  ScrollView,
-  Text,
-  Image,
-  TouchableOpacity,
-  FlatList,
-  ImageBackground,
-} from "react-native";
+import { View, ScrollView, Text, Image, TouchableOpacity } from "react-native";
 import HeaderComponent from "../shared/components/HeaderComponent";
 import Colors from "../utils/Colors";
 import FooterComponent from "../shared/components/FooterComponent";
@@ -16,112 +6,39 @@ import Ionicons from "@expo/vector-icons/Ionicons";
 import RatingComponent from "../shared/components/RatingComponent";
 import BreadcumbComponent from "../shared/components/BreadcumnComponent";
 import EpisodesComponent from "../shared/components/EpisodesComponent";
-import { useState } from "react";
+import { Fragment, useEffect, useRef, useState } from "react";
 import CommentComponent from "../shared/components/CommentComponent";
-export default function MovieDetailScreen() {
+import ListMoviesComponent from "../shared/components/ApartOfMovies/ListMoviesComponents";
+import useMovieApi from "../core/hooks/useMovieApi";
+import { useSelector } from "react-redux";
+export default function MovieDetailScreen({ navigation, route }: any) {
+  const { slug }: any = route?.params; // Lấy slug từ tham số
+  const { getMovieNewUpdate, getMovieBySlug } = useMovieApi();
+  const [movie, setMovie] = useState<any>(null);
+  const [episodes, setEpisodes] = useState<any>(null);
   const [selectedTab, setSelectedTab] = useState("episodes");
-  const movies = [
-    {
-      id: 1,
-      movieName: "Movie 1",
-      imageUrl:
-        "https://image.motchilltv.my/motchill/luu-thuy-dieu-dieu-x350.webp",
-    },
-    {
-      id: 2,
-      movieName: "Movie 2",
-      imageUrl:
-        "https://image.motchilltv.my/motchill/luu-thuy-dieu-dieu-x350.webp",
-    },
-    {
-      id: 3,
-      movieName: "Movie 3",
-      imageUrl:
-        "https://image.motchilltv.my/motchill/luu-thuy-dieu-dieu-x350.webp",
-    },
-    {
-      id: 4,
-      movieName: "Movie 4",
-      imageUrl:
-        "https://image.motchilltv.my/motchill/luu-thuy-dieu-dieu-x350.webp",
-    },
-    {
-      id: 4,
-      movieName: "Movie 4",
-      imageUrl:
-        "https://image.motchilltv.my/motchill/luu-thuy-dieu-dieu-x350.webp",
-    },
-    {
-      id: 4,
-      movieName: "Movie 4",
-      imageUrl:
-        "https://image.motchilltv.my/motchill/luu-thuy-dieu-dieu-x350.webp",
-    },
-    {
-      id: 4,
-      movieName: "Movie 4",
-      imageUrl:
-        "https://image.motchilltv.my/motchill/luu-thuy-dieu-dieu-x350.webp",
-    },
-  ];
+  const movieNewUpdateSelector = useSelector(
+    (state: any) => state.movie?.moviesNewUpdate
+  );
+
+  const scrollViewRef: any = useRef(null);
+
+  useEffect(() => {
+    handleGetMovieBySlug(slug);
+    scrollViewRef.current.scrollTo({ y: 0, animated: true });
+  }, [slug]);
+
+  const handleGetMovieBySlug = async (slug: string) => {
+    const movie = await getMovieBySlug(slug);
+    if (movie) {
+      setMovie(movie?.movie);
+      setEpisodes(movie?.episodes);
+    }
+  };
   const handleSelected = (tab: string) => {
     setSelectedTab(tab);
   };
-  const renderItemMovies = ({ item }: any) => {
-    return (
-      <TouchableOpacity
-        style={{
-          flex: 1,
-          marginLeft: 12,
-          marginBottom: 12,
-          backgroundColor: Colors.bgPrimary,
-        }}
-      >
-        <View>
-          <ImageBackground
-            source={{ uri: item?.imageUrl }}
-            style={{ height: 200 }}
-          >
-            <Text
-              style={{
-                color: Colors.textWhite,
-                fontSize: 14,
-                fontWeight: "bold",
-                backgroundColor: Colors.primary,
-                alignSelf: "flex-start",
-                padding: 5,
-                marginTop: 10,
-              }}
-            >
-              Full 40/40
-            </Text>
-          </ImageBackground>
-          <View style={{ padding: 10 }}>
-            <Text
-              style={{
-                color: Colors.textWhite,
-                fontWeight: "bold",
-                textTransform: "capitalize",
-                fontSize: 16,
-              }}
-            >
-              Hố Sâu Đói Khát
-            </Text>
-            <Text
-              style={{
-                color: Colors.textGrey,
-                textTransform: "capitalize",
-                fontWeight: "bold",
-                marginTop: 6,
-              }}
-            >
-              The Platform 2
-            </Text>
-          </View>
-        </View>
-      </TouchableOpacity>
-    );
-  };
+
   return (
     <View
       style={{
@@ -131,154 +48,176 @@ export default function MovieDetailScreen() {
         padding: 12,
       }}
     >
-      <HeaderComponent />
-      <ScrollView style={{ flex: 1 }}>
-        <BreadcumbComponent />
+      <HeaderComponent navigation={navigation} />
+      <ScrollView style={{ flex: 1 }} ref={scrollViewRef}>
+        <BreadcumbComponent name={movie?.name} navigation={navigation}/>
         <View
           style={{
             marginTop: 12,
           }}
         >
-          <View
-            style={{
-              flexDirection: "row",
-              paddingTop: 12,
-              paddingBottom: 12,
-              backgroundColor: "#18181B",
-            }}
-          >
-            <View style={{ flexBasis: "35%" }}>
-              <Image
-                source={{
-                  uri: "https://i.mpcdn.top/c/oaymbXK/tam-sinh-vo-thuong.jpg",
-                }}
-                style={{ height: 200, resizeMode: "cover", borderRadius: 5 }}
-              />
-            </View>
+          {movie && (
             <View
-              style={{ flexBasis: "65%", paddingRight: 10, paddingLeft: 10 }}
+              style={{
+                flexDirection: "row",
+                paddingTop: 12,
+                paddingBottom: 12,
+                backgroundColor: "#18181B",
+              }}
             >
-              <Text
-                style={{
-                  color: Colors.textWhite,
-                  fontWeight: "bold",
-                  textTransform: "uppercase",
-                  fontSize: 18,
-                  marginBottom: 6,
-                }}
-              >
-                TAM SINH VÔ THƯƠNG
-              </Text>
-              <Text
-                style={{
-                  color: Colors.textGrey,
-                  fontWeight: "500",
-                  textTransform: "capitalize",
-                  fontSize: 16,
-                  marginBottom: 6,
-                }}
-              >
-                Be loved a lifetime
-              </Text>
+              <View style={{ flexBasis: "35%" }}>
+                <Image
+                  source={{
+                    uri: movie?.thumb_url,
+                  }}
+                  style={{ height: 200, resizeMode: "cover", borderRadius: 5 }}
+                />
+              </View>
               <View
-                style={{
-                  padding: 5,
-                  backgroundColor: Colors.primary,
-                  alignSelf: "flex-start",
-                  marginBottom: 20,
-                }}
+                style={{ flexBasis: "65%", paddingRight: 10, paddingLeft: 10 }}
               >
                 <Text
                   style={{
                     color: Colors.textWhite,
-                    textTransform: "capitalize",
-                    fontSize: 14,
+                    fontWeight: "bold",
+                    textTransform: "uppercase",
+                    fontSize: 18,
+                    marginBottom: 6,
                   }}
                 >
-                  Tập 15 vietsub
+                  {movie?.name}
                 </Text>
-              </View>
-              <View style={{ flexDirection: "row", gap: 5, marginBottom: 6 }}>
-                <TouchableOpacity>
-                  <Text
-                    style={{
-                      color: Colors.textWhite,
-                      fontSize: 14,
-                      fontWeight: "bold",
-                    }}
-                  >
-                    2024 ·
-                  </Text>
-                </TouchableOpacity>
-                <TouchableOpacity>
-                  <Text
-                    style={{
-                      color: Colors.textWhite,
-                      fontSize: 14,
-                      fontWeight: "bold",
-                    }}
-                  >
-                    Trung Quốc ·
-                  </Text>
-                </TouchableOpacity>
-                <TouchableOpacity>
-                  <Text
-                    style={{
-                      color: Colors.textWhite,
-                      fontSize: 14,
-                      fontWeight: "bold",
-                    }}
-                  >
-                    Phim Bộ
-                  </Text>
-                </TouchableOpacity>
-              </View>
-              <View style={{ flexDirection: "row", marginBottom: 20 }}>
-                <Text style={{ color: Colors.textGrey }}>Thể Loại: </Text>
-                <TouchableOpacity>
-                  <Text style={{ color: Colors.textWhite }}>
-                    Cổ Trang - Thần Thoại
-                  </Text>
-                </TouchableOpacity>
-              </View>
-              {/* Rating */}
-              <RatingComponent />
-              {/* Play/Follow */}
-              <View style={{ flexDirection: "row", gap: 10 }}>
-                <TouchableOpacity
+                <Text
                   style={{
-                    backgroundColor: "#D9534F",
-                    padding: 7,
-                    alignSelf: "flex-start",
-                    flexDirection: "row",
-                    alignItems: "center",
-                    borderRadius: 3,
+                    color: Colors.textGrey,
+                    fontWeight: "500",
+                    textTransform: "capitalize",
+                    fontSize: 16,
+                    marginBottom: 6,
                   }}
                 >
-                  <Ionicons name="play" size={22} color={"white"} />
-                  <Text style={{ color: Colors.textWhite, fontSize: 16 }}>
-                    Xem Ngay
-                  </Text>
-                </TouchableOpacity>
-                <TouchableOpacity
+                  {movie?.origin_name}
+                </Text>
+                <View
                   style={{
-                    backgroundColor: Colors.textGrey,
-                    padding: 7,
+                    padding: 5,
+                    backgroundColor: Colors.primary,
                     alignSelf: "flex-start",
-                    flexDirection: "row",
-                    alignItems: "center",
-                    borderRadius: 3,
+                    marginBottom: 20,
                   }}
                 >
-                  <Ionicons
-                    name="add-circle-outline"
-                    size={22}
-                    color={"white"}
-                  />
-                </TouchableOpacity>
+                  <Text
+                    style={{
+                      color: Colors.textWhite,
+                      textTransform: "capitalize",
+                      fontSize: 14,
+                      fontWeight: "500",
+                    }}
+                  >
+                    {movie?.episode_current + " " + movie?.lang}
+                  </Text>
+                </View>
+                <View style={{ flexDirection: "row", gap: 5, marginBottom: 6 }}>
+                  <TouchableOpacity>
+                    <Text
+                      style={{
+                        color: Colors.textWhite,
+                        fontSize: 14,
+                        fontWeight: "bold",
+                      }}
+                    >
+                      {movie?.year} ·
+                    </Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity>
+                    <Text
+                      style={{
+                        color: Colors.textWhite,
+                        fontSize: 14,
+                        fontWeight: "bold",
+                      }}
+                    >
+                      {movie?.country[0]?.name} ·
+                    </Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity onPress={() => {}}>
+                    <Text
+                      style={{
+                        color: Colors.textWhite,
+                        fontSize: 14,
+                        fontWeight: "bold",
+                      }}
+                    >
+                      {movie?.type === "series"
+                        ? "Phim Bộ"
+                        : movie?.type === "single"
+                          ? "Phim Lẻ"
+                          : "Hoạt Hình"}
+                    </Text>
+                  </TouchableOpacity>
+                </View>
+                <View style={{ flexDirection: "row", marginBottom: 20,flexWrap:'wrap' }}>
+                  <Text style={{ color: Colors.textGrey }}>Thể Loại: </Text>
+                  {movie?.category &&
+                    movie.category.map((cat: any, index: any) => (
+                      <Fragment key={cat.id}>
+                        <TouchableOpacity>
+                          <Text style={{ color: Colors.textWhite }}>
+                            {cat.name}
+                          </Text>
+                        </TouchableOpacity>
+                        {index < movie.category.length - 1 && (
+                          <Text style={{ color: Colors.textWhite }}> - </Text> // Thêm dấu " - " giữa các thể loại
+                        )}
+                      </Fragment>
+                    ))}
+                </View>
+                {/* Rating */}
+                <RatingComponent />
+                {/* Play/Follow */}
+                <View style={{ flexDirection: "row", gap: 10 }}>
+                  <TouchableOpacity
+                    onPress={() => {
+                      navigation.navigate("ViewMovieScreen", {
+                        episodeSelected:
+                          episodes && episodes[0]?.server_data[0],
+                        indexSelected: 0,
+                      });
+                    }}
+                    style={{
+                      backgroundColor: "#D9534F",
+                      padding: 7,
+                      alignSelf: "flex-start",
+                      flexDirection: "row",
+                      alignItems: "center",
+                      borderRadius: 3,
+                    }}
+                  >
+                    <Ionicons name="play" size={22} color={"white"} />
+                    <Text style={{ color: Colors.textWhite, fontSize: 16 }}>
+                      Xem Ngay
+                    </Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    style={{
+                      backgroundColor: Colors.textGrey,
+                      padding: 7,
+                      alignSelf: "flex-start",
+                      flexDirection: "row",
+                      alignItems: "center",
+                      borderRadius: 3,
+                    }}
+                  >
+                    <Ionicons
+                      name="add-circle-outline"
+                      size={22}
+                      color={"white"}
+                    />
+                  </TouchableOpacity>
+                </View>
               </View>
             </View>
-          </View>
+          )}
           {/* Episodes movies */}
           <View
             style={{
@@ -360,7 +299,12 @@ export default function MovieDetailScreen() {
               </TouchableOpacity>
             </View>
             <View style={{ backgroundColor: "#222222" }}>
-              {selectedTab === "episodes" && <EpisodesComponent />}
+              {selectedTab === "episodes" && (
+                <EpisodesComponent
+                  episodes={episodes}
+                  navigation={navigation}
+                />
+              )}
 
               {selectedTab === "info" && (
                 <View style={{ padding: 12 }}>
@@ -376,26 +320,40 @@ export default function MovieDetailScreen() {
                   </Text>
                   <View
                     style={{
-                      flex: 1,
-                      marginTop: 12,
+                      minHeight: 150,
+                      overflow: "hidden",
+                      backgroundColor: Colors.bgPrimary,
+                      width: "100%",
+                      padding: 6,
                     }}
                   >
-                    <Text style={{ color: Colors.textGrey, fontSize: 16 }}>
-                      <Text style={{ fontWeight: "bold" }}>
-                        Tam Sinh Vô Thương
+                    <Text
+                      style={{
+                        color: Colors.textWhite,
+                        fontSize: 16,
+                        lineHeight: 26,
+                      }}
+                      numberOfLines={5}
+                      ellipsizeMode="tail"
+                    >
+                      <Text
+                        style={{ color: Colors.textGrey, fontWeight: "bold" }}
+                      >
+                        {movie?.name + " "}
                       </Text>
-                      <Text>
-                        kể về Thương Ấu, nữ tử trẻ tuổi của tộc Thánh Linh vô
-                        tình cứu được Tư Uyên, Minh Vương của Minh tộc vào trước
-                        ngày đại hôn, lại không biết đêm tân hôn toàn tộc sẽ bị
-                        giết. Để hồi sinh tộc nhân, Thương Ấu giả làm yêu tinh
-                        hươu Mộng Li tới Minh tộc để lấy trái tim hổ phách của
-                        Minh Vương. Trong khoảng thời gian cùng chung sống,
-                        Thương Ấu đã phải lòng kẻ thù của mình, nhưng để hồi
-                        sinh tộc nhân, Thương Ấu vẫn lựa chọn moi tim Tư Uyên,
-                        cuối cùng lại phát hiện kẻ thù là người khác...
-                      </Text>
+                      <Text>{movie?.content}</Text>
                     </Text>
+                    <TouchableOpacity style={{ alignSelf: "flex-end" }}>
+                      <Text
+                        style={{
+                          color: Colors.primary,
+                          fontSize: 16,
+                          fontWeight: "bold",
+                        }}
+                      >
+                        Xem thêm
+                      </Text>
+                    </TouchableOpacity>
                   </View>
                 </View>
               )}
@@ -419,7 +377,7 @@ export default function MovieDetailScreen() {
                       }}
                     >
                       <Text style={{ color: Colors.textGrey, fontSize: 16 }}>
-                        Cổ thiên lạc
+                        {movie?.director}
                       </Text>
                     </View>
                   </View>
@@ -441,7 +399,7 @@ export default function MovieDetailScreen() {
                       }}
                     >
                       <Text style={{ color: Colors.textGrey, fontSize: 16 }}>
-                        Lý tiểu long, Cổ thiên lạc
+                        {movie?.actor?.map((a: any) => a).join(", ")}
                       </Text>
                     </View>
                   </View>
@@ -470,16 +428,19 @@ export default function MovieDetailScreen() {
                 PHIM ĐỀ CỬ
               </Text>
             </View>
-            <View style={{ marginTop: 12, marginLeft: -12 }}>
-              <FlatList
-                scrollEnabled={false}
-                data={movies}
-                keyExtractor={(item) => item?.id.toString()}
-                renderItem={renderItemMovies}
-                numColumns={2}
+            {/* List movies */}
+            {movieNewUpdateSelector && (
+              <ListMoviesComponent
+                movies={movieNewUpdateSelector?.slice(0, 16)}
+                navigation={navigation}
               />
-            </View>
+            )}
             <TouchableOpacity
+              onPress={() =>
+                navigation.navigate("ListMoviesScreen", {
+                  typeSlugItem: { name: "Phim mới", slug: "phim-moi" },
+                })
+              }
               style={{
                 alignSelf: "center",
                 backgroundColor: Colors.primary,

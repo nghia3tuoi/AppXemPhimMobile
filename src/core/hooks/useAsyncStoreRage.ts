@@ -1,6 +1,7 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const useAsyncStoreRage = () => {
+ 
   const getLogin = async () => {
     try {
       const login = await AsyncStorage.getItem("login");

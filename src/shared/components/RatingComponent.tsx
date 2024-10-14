@@ -6,34 +6,34 @@ export default function RatingComponent() {
         <View style={{  marginBottom:20}}>
         <View style={{ flexDirection: "row", marginBottom:3 }}>
           <TouchableOpacity>
-            <Ionicons name="star-outline" color={"yellow"} size={18} />
+            <Ionicons name="star-outline" color={"yellow"} size={20} />
           </TouchableOpacity>
           <TouchableOpacity>
-            <Ionicons name="star-outline" color={"yellow"} size={18} />
+            <Ionicons name="star-outline" color={"yellow"} size={20} />
           </TouchableOpacity>
           <TouchableOpacity>
-            <Ionicons name="star-outline" color={"yellow"} size={18} />
+            <Ionicons name="star-outline" color={"yellow"} size={20} />
           </TouchableOpacity>
           <TouchableOpacity>
-            <Ionicons name="star-outline" color={"yellow"} size={18} />
+            <Ionicons name="star-outline" color={"yellow"} size={20} />
           </TouchableOpacity>
           <TouchableOpacity>
-            <Ionicons name="star-outline" color={"yellow"} size={18} />
+            <Ionicons name="star-outline" color={"yellow"} size={20} />
           </TouchableOpacity>
           <TouchableOpacity>
-            <Ionicons name="star-outline" color={"yellow"} size={18} />
+            <Ionicons name="star-outline" color={"yellow"} size={20} />
           </TouchableOpacity>
           <TouchableOpacity>
-            <Ionicons name="star-outline" color={"yellow"} size={18} />
+            <Ionicons name="star-outline" color={"yellow"} size={20} />
           </TouchableOpacity>
           <TouchableOpacity>
-            <Ionicons name="star-outline" color={"yellow"} size={18} />
+            <Ionicons name="star-outline" color={"yellow"} size={20} />
           </TouchableOpacity>
           <TouchableOpacity>
-            <Ionicons name="star-outline" color={"yellow"} size={18} />
+            <Ionicons name="star-outline" color={"yellow"} size={20} />
           </TouchableOpacity>
           <TouchableOpacity>
-            <Ionicons name="star-outline" color={"yellow"} size={18} />
+            <Ionicons name="star-outline" color={"yellow"} size={20} />
           </TouchableOpacity>
         </View>
         <View>

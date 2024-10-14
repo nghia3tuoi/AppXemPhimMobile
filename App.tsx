@@ -7,19 +7,22 @@ import HomeScreen from "./src/features/HomeScreen";
 import { NativeBaseProvider } from "native-base";
 import MovieDetailScreen from "./src/features/MovieDetailScreen";
 import ListMoviesScreen from "./src/features/ListMoviesScreen";
-import ViewMovieSreen from "./src/features/ViewMovieScreen";
+
 import "./src/config/firebaseConfig";
 import Toast from "react-native-toast-message";
 import { Provider } from "react-redux";
 import store from "./src/core/store";
+import ViewMovieScreen from "./src/features/ViewMovieScreen";
+import FavoriteMoviesScreen from "./src/features/FavoriteMoviesScreen";
 export type RootStackParamList = {
   HomeScreen: any;
-  LoginScreen:any;
-  RegisterScreen:any;
-  ForgetPasswordScreen:any;
-  ListMoviesScreen:any;
-  MovieDetailScreen:any;
-  ViewMovieSreen:any;
+  LoginScreen: any;
+  RegisterScreen: any;
+  ForgetPasswordScreen: any;
+  ListMoviesScreen: any;
+  MovieDetailScreen: any;
+  ViewMovieScreen: any;
+  FavoriteMoviesScreen:any;
 };
 const Stack = createStackNavigator<RootStackParamList>();
 export default function App() {
@@ -27,14 +30,15 @@ export default function App() {
     <Provider store={store}>
       <NativeBaseProvider>
         <NavigationContainer>
-          <Stack.Navigator screenOptions={{ headerShown: false }}>
+          <Stack.Navigator screenOptions={{ headerShown: false }} >
+            <Stack.Screen name="HomeScreen" component={HomeScreen} />
             <Stack.Screen name="LoginScreen" component={LoginScreen} />
             <Stack.Screen name="RegisterScreen" component={RegisterScreen} />
             <Stack.Screen
               name="ForgetPasswordScreen"
               component={ForgetPassword}
             />
-            <Stack.Screen name="HomeScreen" component={HomeScreen} />
+
             <Stack.Screen
               name="ListMoviesScreen"
               component={ListMoviesScreen}
@@ -43,7 +47,11 @@ export default function App() {
               name="MovieDetailScreen"
               component={MovieDetailScreen}
             />
-            <Stack.Screen name="ViewMovieSreen" component={ViewMovieSreen} />
+            <Stack.Screen name="ViewMovieScreen" component={ViewMovieScreen} />
+            <Stack.Screen
+              name="FavoriteMoviesScreen"
+              component={FavoriteMoviesScreen}
+            />
           </Stack.Navigator>
           <Toast />
         </NavigationContainer>

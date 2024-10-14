@@ -4,6 +4,7 @@ import {
   onAuthStateChanged,
   sendPasswordResetEmail,
   signInWithEmailAndPassword,
+  signOut,
 } from "firebase/auth";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -116,6 +117,17 @@ const useAuth = () => {
       // Hiển thị thông báo lỗi cho người dùng nếu cần
     }
   };
-  return { register, login, forgotPassword };
+  const logout = async () => {
+    try {
+      await signOut(auth);
+      toastSuccess(
+        "Đăng xuất",
+        "Đăng xuất thành công."
+      );
+    } catch (err: any) {
+      toastError("Đăng xuất", "Đăng xuất thất bại.");
+    }
+  };
+  return { register, login,logout, forgotPassword };
 };
 export default useAuth;

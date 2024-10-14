@@ -3,136 +3,58 @@ import {
   View,
   Text,
   TouchableOpacity,
-  Dimensions,
-  Keyboard,
-  TouchableWithoutFeedback,
-  ImageBackground,
-  FlatList,
+  ActivityIndicator,
 } from "react-native";
 import Colors from "../utils/Colors";
 import { useEffect, useState } from "react";
-import Carousel from "react-native-reanimated-carousel";
 import HeaderComponent from "../shared/components/HeaderComponent";
 import FooterComponent from "../shared/components/FooterComponent";
 import { useSelector } from "react-redux";
+import Ionicons from "@expo/vector-icons/Ionicons";
+import PopularMoviesComponent from "../shared/components/ApartOfMovies/PopularMoviesComponent";
+import useMovieApi from "../core/hooks/useMovieApi";
+import ListMoviesComponent from "../shared/components/ApartOfMovies/ListMoviesComponents";
 
 export default function HomeScreen({ navigation }: any) {
-  const screenWidth = Dimensions.get("window").width; // Lấy chiều rộng màn hình
-  const [selectedTab, setSelectedTab] = useState("series");
   const selectUser = useSelector((state: any) => state?.auth?.user);
-  const movies = [
-    {
-      id: 1,
-      movieName: "Movie 1",
-      imageUrl:
-        "https://image.motchilltv.my/motchill/luu-thuy-dieu-dieu-x350.webp",
-    },
-    {
-      id: 2,
-      movieName: "Movie 2",
-      imageUrl:
-        "https://image.motchilltv.my/motchill/luu-thuy-dieu-dieu-x350.webp",
-    },
-    {
-      id: 3,
-      movieName: "Movie 3",
-      imageUrl:
-        "https://image.motchilltv.my/motchill/luu-thuy-dieu-dieu-x350.webp",
-    },
-    {
-      id: 4,
-      movieName: "Movie 4",
-      imageUrl:
-        "https://image.motchilltv.my/motchill/luu-thuy-dieu-dieu-x350.webp",
-    },
-    {
-      id: 4,
-      movieName: "Movie 4",
-      imageUrl:
-        "https://image.motchilltv.my/motchill/luu-thuy-dieu-dieu-x350.webp",
-    },
-    {
-      id: 4,
-      movieName: "Movie 4",
-      imageUrl:
-        "https://image.motchilltv.my/motchill/luu-thuy-dieu-dieu-x350.webp",
-    },
-    {
-      id: 4,
-      movieName: "Movie 4",
-      imageUrl:
-        "https://image.motchilltv.my/motchill/luu-thuy-dieu-dieu-x350.webp",
-    },
-  ];
-  useEffect(()=>{
-    if(selectUser === null) {
-      return navigation.navigate("HomeScreen");
-    }
-  },[])
+  const [moviesSingle, setMoviesSingle] = useState<any>(null);
+  const [moviesSeries, setMoviesSeries] = useState<any>(null);
+  const [moviesAnime, setMoviesAnime] = useState<any>(null);
+  const [selectedTab, setSelectedTab] = useState("series");
+  const { getMoviesByTypeSlug } = useMovieApi();
+  useEffect(() => {
+    handleGetMoviesSingle("phim-le");
+    handleGetMoviesSeries("phim-bo");
+    handleGetMoviesAnime("hoat-hinh");
+  }, []);
+
+  const handleGetMoviesSingle = async (TypeSlug: string) => {
+    const moviesSingle = await getMoviesByTypeSlug(1, TypeSlug,"");
+    setMoviesSingle(moviesSingle);
+  };
+  const handleGetMoviesSeries = async (TypeSlug: string) => {
+    const moviesSeries = await getMoviesByTypeSlug(1, TypeSlug,"");
+    setMoviesSeries(moviesSeries);
+  };
+  const handleGetMoviesAnime = async (TypeSlug: string) => {
+    const moviesAnime = await getMoviesByTypeSlug(1, TypeSlug,"trung-quoc");
+    setMoviesAnime(moviesAnime);
+  };
+  //
   const handleSelectedTab = (type: string) => {
     setSelectedTab(type);
   };
-
-  const renderItemMovies = ({ item }: any) => {
-    return (
-      <TouchableOpacity
-        style={{
-          flex: 1,
-          marginLeft: 12,
-          marginBottom: 12,
-          backgroundColor: Colors.bgPrimary,
-        }}
-      >
-        <View>
-          <ImageBackground
-            source={{ uri: item?.imageUrl }}
-            style={{ height: 200 }}
-          >
-            <Text
-              style={{
-                color: Colors.textWhite,
-                fontSize: 14,
-                fontWeight: "bold",
-                backgroundColor: Colors.primary,
-                alignSelf: "flex-start",
-                padding: 5,
-                marginTop: 10,
-              }}
-            >
-              Full 40/40
-            </Text>
-          </ImageBackground>
-          <View style={{ padding: 10 }}>
-            <Text
-              style={{
-                color: Colors.textWhite,
-                fontWeight: "bold",
-                textTransform: "capitalize",
-                fontSize: 16,
-              }}
-            >
-              Hố Sâu Đói Khát
-            </Text>
-            <Text
-              style={{
-                color: Colors.textGrey,
-                textTransform: "capitalize",
-                fontWeight: "bold",
-                marginTop: 6,
-              }}
-            >
-              The Platform 2
-            </Text>
-          </View>
-        </View>
-      </TouchableOpacity>
-    );
-  };
+  useEffect(() => {
+    // console.log(selectUser)
+    // if(selectUser === null) {
+    //   return navigation.navigate("LoginScreen");
+    // }
+  }, []);
   return (
     <View style={{ flex: 1, backgroundColor: Colors.bgMain, paddingTop: 40 }}>
       <View style={{ flex: 1, padding: 12 }}>
         {/* Header */}
-        <HeaderComponent />
+        <HeaderComponent navigation={navigation}/>
         <ScrollView style={{ padding: 4, height: "100%", flex: 1 }}>
           {/* Content Main */}
           {/* single / series */}
@@ -141,107 +63,9 @@ export default function HomeScreen({ navigation }: any) {
               paddingBottom: 12,
             }}
           >
-            <View
-              style={{
-                borderBottomColor: Colors.primary,
-                borderBottomWidth: 0.5,
-              }}
-            >
-              <View
-                style={{
-                  borderLeftWidth: 3,
-                  borderLeftColor: Colors.primary,
-                  marginTop: 12,
-                }}
-              >
-                <Text
-                  style={{
-                    color: Colors.textWhite,
-                    fontSize: 18,
-                    padding: 5,
-                  }}
-                >
-                  THỊNH HÀNH
-                </Text>
-              </View>
-              <View style={{ flex: 1 }}>
-                <Carousel
-                  loop
-                  height={250}
-                  width={screenWidth * 0.9}
-                  data={movies}
-                  scrollAnimationDuration={1000}
-                  mode="parallax"
-                  renderItem={({ item, index }) => (
-                    <TouchableOpacity style={{ flex: 1 }}>
-                      <ImageBackground
-                        source={{ uri: item.imageUrl }}
-                        style={{
-                          flex: 1,
-                          justifyContent: "space-between",
-                        }}
-                      >
-                        <View
-                          style={{
-                            flexDirection: "row",
-                            justifyContent: "space-between",
-                          }}
-                        >
-                          <View style={{ marginTop: 10 }}>
-                            <Text
-                              style={{
-                                color: Colors.textWhite,
-                                fontSize: 16,
-                                padding: 5,
-                                backgroundColor: Colors.primary,
-                                fontWeight: "bold",
-                              }}
-                            >
-                              Tập full 40/40 Vietsub
-                            </Text>
-                          </View>
-                          <View>
-                            <Text
-                              style={{
-                                backgroundColor: "red",
-                                color: Colors.textWhite,
-                                fontSize: 16,
-                                padding: 5,
-                                fontWeight: "bold",
-                              }}
-                            >
-                              Phim mới
-                            </Text>
-                          </View>
-                        </View>
-                        <View
-                          style={{
-                            padding: 15,
-                            gap: 5,
-                          }}
-                        >
-                          <Text
-                            style={{
-                              color: Colors.textWhite,
-                              fontSize: 20,
-                              fontWeight: "bold",
-                            }}
-                          >
-                            {item?.movieName}
-                          </Text>
-                          <Text
-                            style={{ color: Colors.textGrey, fontSize: 20 }}
-                          >
-                            2024
-                          </Text>
-                        </View>
-                      </ImageBackground>
-                    </TouchableOpacity>
-                  )}
-                />
-              </View>
-            </View>
-            {/* series/single */}
+            {/* Popular movies */}
+            <PopularMoviesComponent navigation={navigation}/>
+            {/* Series/Single */}
             <View style={{ marginTop: 12 }}>
               <View style={{ flexDirection: "row", gap: 10 }}>
                 <TouchableOpacity
@@ -271,26 +95,20 @@ export default function HomeScreen({ navigation }: any) {
                   </Text>
                 </TouchableOpacity>
               </View>
-              <View style={{ marginTop: 12, marginLeft: -12 }}>
-                {selectedTab === "series" && (
-                  <FlatList
-                    scrollEnabled={false}
-                    data={movies}
-                    keyExtractor={(item) => item?.id.toString()}
-                    renderItem={renderItemMovies}
-                    numColumns={2}
-                  />
-                )}
-                {selectedTab === "single" && (
-                  <FlatList
-                    scrollEnabled={false}
-                    data={movies}
-                    keyExtractor={(item) => item?.id.toString()}
-                    renderItem={renderItemMovies}
-                    numColumns={2}
-                  />
-                )}
-              </View>
+              {/*  List Movies Series */}
+              {selectedTab === "series" && !moviesSeries && (
+                <ActivityIndicator size={26} />
+              )}
+              {selectedTab === "series" && moviesSeries && (
+                <ListMoviesComponent navigation={navigation} movies={moviesSeries?.slice(0, 16)} />
+              )}
+              {/*  List Movies Single */}
+              {selectedTab === "single" && !moviesSingle && (
+                <ActivityIndicator size={26} />
+              )}
+              {selectedTab === "single" && moviesSingle && (
+                <ListMoviesComponent navigation={navigation} movies={moviesSingle?.slice(0, 16)} />
+              )}
               <TouchableOpacity
                 style={{
                   alignSelf: "center",
@@ -300,11 +118,11 @@ export default function HomeScreen({ navigation }: any) {
                 }}
               >
                 <Text style={{ color: Colors.textWhite, fontSize: 16 }}>
-                  Xem thêm...
+                  Xem thêm &gt;&gt;
                 </Text>
               </TouchableOpacity>
             </View>
-            {/* PHIM HÀNH ĐỘNG */}
+            {/* Phim Anime */}
             <View style={{ marginTop: 12 }}>
               <View
                 style={{
@@ -320,29 +138,14 @@ export default function HomeScreen({ navigation }: any) {
                     padding: 5,
                   }}
                 >
-                  PHIM HÀNH ĐỘNG
+                  ANIME
                 </Text>
               </View>
-              <View style={{ marginTop: 12, marginLeft: -12 }}>
-                {selectedTab === "series" && (
-                  <FlatList
-                    scrollEnabled={false}
-                    data={movies}
-                    keyExtractor={(item) => item?.id.toString()}
-                    renderItem={renderItemMovies}
-                    numColumns={2}
-                  />
-                )}
-                {selectedTab === "single" && (
-                  <FlatList
-                    scrollEnabled={false}
-                    data={movies}
-                    keyExtractor={(item) => item?.id.toString()}
-                    renderItem={renderItemMovies}
-                    numColumns={2}
-                  />
-                )}
-              </View>
+              {/*  List movies */}
+              {!moviesAnime && <ActivityIndicator size={26} />}
+              {moviesAnime && (
+                <ListMoviesComponent navigation={navigation} movies={moviesAnime?.slice(0, 16)} />
+              )}
               <TouchableOpacity
                 style={{
                   alignSelf: "center",
@@ -352,7 +155,7 @@ export default function HomeScreen({ navigation }: any) {
                 }}
               >
                 <Text style={{ color: Colors.textWhite, fontSize: 16 }}>
-                  Xem thêm...
+                  Xem thêm &gt;&gt;
                 </Text>
               </TouchableOpacity>
             </View>
@@ -364,5 +167,3 @@ export default function HomeScreen({ navigation }: any) {
     </View>
   );
 }
-
-

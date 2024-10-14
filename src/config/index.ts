@@ -1,0 +1,1 @@
+export const URL_IMAGE_OPHIM = "https://img.ophim.live/uploads/movies/";
