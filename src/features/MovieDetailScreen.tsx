@@ -1,4 +1,11 @@
-import { View, ScrollView, Text, Image, TouchableOpacity } from "react-native";
+import {
+  View,
+  ScrollView,
+  Text,
+  Image,
+  TouchableOpacity,
+  ActivityIndicator,
+} from "react-native";
 import HeaderComponent from "../shared/components/HeaderComponent";
 import Colors from "../utils/Colors";
 import FooterComponent from "../shared/components/FooterComponent";
@@ -11,30 +18,55 @@ import CommentComponent from "../shared/components/CommentComponent";
 import ListMoviesComponent from "../shared/components/ApartOfMovies/ListMoviesComponents";
 import useMovieApi from "../core/hooks/useMovieApi";
 import { useSelector } from "react-redux";
+import useMovie from "../core/hooks/useMovie";
 export default function MovieDetailScreen({ navigation, route }: any) {
   const { slug }: any = route?.params; // Lấy slug từ tham số
   const { getMovieNewUpdate, getMovieBySlug } = useMovieApi();
+  const { getFavoriteMovie, addFavoriteMovie, removeFavoriteMovieById } =
+    useMovie();
   const [movie, setMovie] = useState<any>(null);
   const [episodes, setEpisodes] = useState<any>(null);
   const [selectedTab, setSelectedTab] = useState("episodes");
+  const [isLoading, setIsLoading] = useState(true);
+  const [isExistMovieFavorite, setIsExistMovieFavorite] = useState(false);
+  const scrollViewRef: any = useRef(null);
+  //selector
+  const selectUser = useSelector((state: any) => state?.auth?.user);
   const movieNewUpdateSelector = useSelector(
     (state: any) => state.movie?.moviesNewUpdate
   );
-
-  const scrollViewRef: any = useRef(null);
-
   useEffect(() => {
     handleGetMovieBySlug(slug);
     scrollViewRef.current.scrollTo({ y: 0, animated: true });
   }, [slug]);
-
+  //movie favorite
+  const handleAddFavoriteMovie = async (userId: string, movie: any) => {
+    setIsExistMovieFavorite(true);
+    await addFavoriteMovie(userId, movie);
+  };
+  const removeFavoriteMovie = async (userId: any, movieId: any) => {
+    setIsExistMovieFavorite(false);
+    await removeFavoriteMovieById(userId, movieId);
+  };
+  const handleCheckExistMovieFavorite = async (userId: any, movieId: any) => {
+    const favoriteMovie: any = await getFavoriteMovie(userId, movieId);
+    if (favoriteMovie) {
+      setIsExistMovieFavorite(true);
+    } else {
+      setIsExistMovieFavorite(false);
+    }
+  };
+  //movie
   const handleGetMovieBySlug = async (slug: string) => {
     const movie = await getMovieBySlug(slug);
     if (movie) {
+      await handleCheckExistMovieFavorite(selectUser?.uid, movie?.movie?._id);
       setMovie(movie?.movie);
       setEpisodes(movie?.episodes);
     }
+    setIsLoading(false);
   };
+  //tab
   const handleSelected = (tab: string) => {
     setSelectedTab(tab);
   };
@@ -50,13 +82,14 @@ export default function MovieDetailScreen({ navigation, route }: any) {
     >
       <HeaderComponent navigation={navigation} />
       <ScrollView style={{ flex: 1 }} ref={scrollViewRef}>
-        <BreadcumbComponent name={movie?.name} navigation={navigation}/>
+        <BreadcumbComponent name={movie?.name} navigation={navigation} />
         <View
           style={{
             marginTop: 12,
           }}
         >
-          {movie && (
+          {isLoading && !movie && <ActivityIndicator size={36} />}
+          {!isLoading && movie && (
             <View
               style={{
                 flexDirection: "row",
@@ -156,7 +189,13 @@ export default function MovieDetailScreen({ navigation, route }: any) {
                     </Text>
                   </TouchableOpacity>
                 </View>
-                <View style={{ flexDirection: "row", marginBottom: 20,flexWrap:'wrap' }}>
+                <View
+                  style={{
+                    flexDirection: "row",
+                    marginBottom: 20,
+                    flexWrap: "wrap",
+                  }}
+                >
                   <Text style={{ color: Colors.textGrey }}>Thể Loại: </Text>
                   {movie?.category &&
                     movie.category.map((cat: any, index: any) => (
@@ -173,7 +212,7 @@ export default function MovieDetailScreen({ navigation, route }: any) {
                     ))}
                 </View>
                 {/* Rating */}
-                <RatingComponent />
+                {movie && <RatingComponent movie={movie} />}
                 {/* Play/Follow */}
                 <View style={{ flexDirection: "row", gap: 10 }}>
                   <TouchableOpacity
@@ -198,22 +237,40 @@ export default function MovieDetailScreen({ navigation, route }: any) {
                       Xem Ngay
                     </Text>
                   </TouchableOpacity>
-                  <TouchableOpacity
-                    style={{
-                      backgroundColor: Colors.textGrey,
-                      padding: 7,
-                      alignSelf: "flex-start",
-                      flexDirection: "row",
-                      alignItems: "center",
-                      borderRadius: 3,
-                    }}
-                  >
-                    <Ionicons
-                      name="add-circle-outline"
-                      size={22}
-                      color={"white"}
-                    />
-                  </TouchableOpacity>
+                  {!isExistMovieFavorite && (
+                    <TouchableOpacity
+                      onPress={async () => {
+                        await handleAddFavoriteMovie(selectUser?.uid, movie);
+                      }}
+                      style={{
+                        backgroundColor: Colors.textGrey,
+                        padding: 7,
+                        alignSelf: "flex-start",
+                        flexDirection: "row",
+                        alignItems: "center",
+                        borderRadius: 3,
+                      }}
+                    >
+                      <Ionicons name="add" size={22} color={"white"} />
+                    </TouchableOpacity>
+                  )}
+                  {isExistMovieFavorite && (
+                    <TouchableOpacity
+                      onPress={async () => {
+                        await removeFavoriteMovie(selectUser?.uid, movie?._id);
+                      }}
+                      style={{
+                        backgroundColor: Colors.textGrey,
+                        padding: 7,
+                        alignSelf: "flex-start",
+                        flexDirection: "row",
+                        alignItems: "center",
+                        borderRadius: 3,
+                      }}
+                    >
+                      <Ionicons name="checkmark" size={22} color={"white"} />
+                    </TouchableOpacity>
+                  )}
                 </View>
               </View>
             </View>
@@ -299,7 +356,8 @@ export default function MovieDetailScreen({ navigation, route }: any) {
               </TouchableOpacity>
             </View>
             <View style={{ backgroundColor: "#222222" }}>
-              {selectedTab === "episodes" && (
+              {selectedTab === "episodes" && episodes &&
+               (
                 <EpisodesComponent
                   episodes={episodes}
                   navigation={navigation}
@@ -408,7 +466,7 @@ export default function MovieDetailScreen({ navigation, route }: any) {
             </View>
           </View>
           {/* Comment */}
-          <CommentComponent />
+          {movie && <CommentComponent movie={movie} />}
           {/* Movie New */}
           <View style={{ marginTop: 12 }}>
             <View

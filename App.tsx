@@ -22,7 +22,7 @@ export type RootStackParamList = {
   ListMoviesScreen: any;
   MovieDetailScreen: any;
   ViewMovieScreen: any;
-  FavoriteMoviesScreen:any;
+  FavoriteMoviesScreen: any;
 };
 const Stack = createStackNavigator<RootStackParamList>();
 export default function App() {
@@ -30,9 +30,10 @@ export default function App() {
     <Provider store={store}>
       <NativeBaseProvider>
         <NavigationContainer>
-          <Stack.Navigator screenOptions={{ headerShown: false }} >
-            <Stack.Screen name="HomeScreen" component={HomeScreen} />
+          <Stack.Navigator screenOptions={{ headerShown: false }}>
             <Stack.Screen name="LoginScreen" component={LoginScreen} />
+            <Stack.Screen name="HomeScreen" component={HomeScreen} />
+
             <Stack.Screen name="RegisterScreen" component={RegisterScreen} />
             <Stack.Screen
               name="ForgetPasswordScreen"

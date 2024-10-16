@@ -8,6 +8,7 @@ import Paginationcomponent from "../shared/components/PaginationComponent";
 import ListMoviesComponent from "../shared/components/ApartOfMovies/ListMoviesComponents";
 import { useSelector } from "react-redux";
 import SearchToolComponent from "../shared/components/SearchToolComponent";
+import useMovieApi from "../core/hooks/useMovieApi";
 import { useEffect } from "react";
 
 export default function ListMoviesScreen({ navigation, route }: any) {
@@ -18,6 +19,18 @@ export default function ListMoviesScreen({ navigation, route }: any) {
     keyword = "",
   }: any = route.params;
   const movieSelector = useSelector((state: any) => state.movie?.movies);
+  const { getAllMovies } = useMovieApi();
+  const handleGetMovies = async (
+    typeSlug: string = "phim-moi",
+    sortField: string = "modified.time",
+    categorySlug: string,
+    countrySlug: string,
+    year: string,
+    page: string
+  ) => {
+    await getAllMovies(typeSlug, sortField, categorySlug, countrySlug, year, page);
+  };
+
   return (
     <View
       style={{
@@ -97,7 +110,7 @@ export default function ListMoviesScreen({ navigation, route }: any) {
               )}
             </View>
             {/* Tool Search */}
-            <SearchToolComponent />
+            <SearchToolComponent handleGetMovies={handleGetMovies} />
           </View>
           {/* Content */}
           {!movieSelector && <ActivityIndicator size={26} />}
@@ -105,11 +118,14 @@ export default function ListMoviesScreen({ navigation, route }: any) {
             <View>
               {/* List Movies */}
               <ListMoviesComponent
-                movies={movieSelector}
+                movies={movieSelector?.data}
                 navigation={navigation}
               />
               {/* Pagination */}
-              <Paginationcomponent />
+              <Paginationcomponent
+                params={movieSelector?.params}
+                handleGetMovies={handleGetMovies}
+              />
             </View>
           )}
         </View>

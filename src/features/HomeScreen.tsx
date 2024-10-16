@@ -45,10 +45,9 @@ export default function HomeScreen({ navigation }: any) {
     setSelectedTab(type);
   };
   useEffect(() => {
-    // console.log(selectUser)
-    // if(selectUser === null) {
-    //   return navigation.navigate("LoginScreen");
-    // }
+    if(selectUser === null) {
+      return navigation.navigate("LoginScreen");
+    }
   }, []);
   return (
     <View style={{ flex: 1, backgroundColor: Colors.bgMain, paddingTop: 40 }}>

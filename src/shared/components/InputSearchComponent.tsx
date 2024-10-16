@@ -60,7 +60,7 @@ export default function InputSearchComponent({ naviagtion }: any) {
           onChangeText={(value) => handleSearchInput(value)}
         />
         <TouchableOpacity
-          onPress={() => console.log(123)}
+    
           style={{ position: "absolute", right: 0, padding: 5 }}
         >
           <Ionicons name="search" size={26} color={"white"} />

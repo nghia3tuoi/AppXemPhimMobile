@@ -36,7 +36,6 @@ export default function LoginScreen({ navigation }: any) {
   const handleLogin = async (values: any) => {
     const { email, password } = values;
     const response = await login(email, password, isRemember);
-    console.log(selectUser);
     if (response !== null) {
       return navigation.navigate("HomeScreen");
     }

@@ -2,7 +2,8 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 interface MovieState {
   movies: any;
-  moviesNewUpdate:any,
+  moviesNewUpdate: any;
+  moviesFavorite:any;
   movie: any;
   error: any;
   isLoading: any;
@@ -11,7 +12,8 @@ interface MovieState {
 const initialState: MovieState = {
   movies: null,
   movie: null,
-  moviesNewUpdate:null,
+  moviesNewUpdate: null,
+  moviesFavorite:null,
   error: null,
   isLoading: false,
 };
@@ -64,6 +66,22 @@ const movieSlice: any = createSlice({
       state.moviesNewUpdate = null;
       state.error = action.payload;
     },
+    //movie favoarites
+    GetMoviesFavoriteStart: (state) => {
+      state.isLoading = true;
+      state.moviesFavorite = null;
+      state.error = null;
+    },
+    GetMoviesFavoriteSuccess: (state, action: PayloadAction<any>) => {
+      state.isLoading = false;
+      state.moviesFavorite = action.payload;
+      state.error = null;
+    },
+    GetMoviesFavoriteError: (state, action: PayloadAction<any>) => {
+      state.isLoading = false;
+      state.moviesFavorite = null;
+      state.error = action.payload;
+    },
   },
 });
 
@@ -78,4 +96,7 @@ export const {
   GetMoviesNewUpdateStart,
   GetMoviesNewUpdateSuccess,
   GetMoviesNewUpdateError,
+  GetMoviesFavoriteStart,
+  GetMoviesFavoriteSuccess,
+  GetMoviesFavoriteError,
 } = movieSlice.actions;

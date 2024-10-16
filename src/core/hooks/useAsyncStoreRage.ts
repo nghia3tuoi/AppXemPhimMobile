@@ -10,7 +10,6 @@ const useAsyncStoreRage = () => {
       }
       return null; // Trả về null nếu không có thông tin đăng nhập
     } catch (error) {
-      console.error("Lỗi lấy thông tin:", error);
       return null; // Trả về null hoặc xử lý lỗi khác
     }
   };

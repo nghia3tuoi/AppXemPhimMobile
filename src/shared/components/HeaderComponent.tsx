@@ -26,7 +26,6 @@ export default function HeaderComponent({ navigation }: any) {
   useEffect(() => {
     hanldeGetCountries();
     hanldeGetCategories();
-    console.log(selectUser);
   }, []);
   const handleLogout = async () => {
     await logout();

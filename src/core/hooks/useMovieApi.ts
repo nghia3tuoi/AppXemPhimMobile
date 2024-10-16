@@ -74,13 +74,20 @@ const useMovieApi = () => {
       return null;
     }
   };
-  const getMoviesByTypeSlug = async (page: number = 1, typeSlug: string,country:string) => {
+  const getMoviesByTypeSlug = async (
+    page: number = 1,
+    typeSlug: string,
+    country: string
+  ) => {
     dispatch(GetMoviesStart());
     try {
       const response: any = await axios.get(
         `https://ophim17.cc/_next/data/j4bBHnWv9JD18kNQ3njRH/danh-sach/${typeSlug}.json?slug=${typeSlug}&country=${country}&page=1`
       );
-      dispatch(GetMoviesSuccess(response.data.pageProps?.data?.items));
+      const params = response.data.pageProps?.data?.params;
+      params.type_list = response.data.pageProps?.data?.type_list;
+      const data = response.data.pageProps?.data?.items;
+      dispatch(GetMoviesSuccess({ data, params }));
       return response.data.pageProps?.data?.items; // Dữ liệu trả về
     } catch (error: any) {
       dispatch(GetMoviesError(error.message));
@@ -92,16 +99,20 @@ const useMovieApi = () => {
     sortField: string = "modified.time",
     categorySlug: string = "",
     countrySlug: string = "",
-    year: string = ""
+    year: string = "",
+    page : string = ""
   ) => {
-    console.log(typeSlug, sortField, categorySlug, countrySlug, year);
+  
     dispatch(GetMoviesStart());
     try {
       const response: any = await axios.get(
-        `https://ophim17.cc/_next/data/j4bBHnWv9JD18kNQ3njRH/danh-sach/${typeSlug}.json?slug=${typeSlug}&sort_field=${sortField}&category=${categorySlug}&country=${countrySlug}&year=${year}`
+        `https://ophim17.cc/_next/data/j4bBHnWv9JD18kNQ3njRH/danh-sach/${typeSlug}.json?slug=${typeSlug}&sort_field=${sortField}&category=${categorySlug}&country=${countrySlug}&year=${year}&page=${page}`
       );
-      dispatch(GetMoviesSuccess(response.data.pageProps?.data?.items));
-
+      const params = response.data.pageProps?.data?.params;
+      params.type_list = response.data.pageProps?.data?.type_list;
+      const data = response.data.pageProps?.data?.items;
+  
+      dispatch(GetMoviesSuccess({ data, params }));
       return response.data.pageProps?.data?.items; // Dữ liệu trả về
     } catch (error: any) {
       dispatch(GetMoviesError(error.message));

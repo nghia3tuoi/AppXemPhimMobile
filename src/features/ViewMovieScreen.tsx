@@ -25,11 +25,12 @@ export default function ViewMovieScreen({ route, navigation }: any) {
   const [movie, setMovie] = useState<any>(null);
   const [episodes, setEpisodes] = useState<any>(null);
   const movieSelector = useSelector((state: any) => state.movie?.movie);
-  const movieNewUpdateSelector = useSelector((state:any)=>state.movie?.moviesNewUpdate)
+  const movieNewUpdateSelector = useSelector(
+    (state: any) => state.movie?.moviesNewUpdate
+  );
   useEffect(() => {
     setMovie(movieSelector?.movie);
     setEpisodes(movieSelector?.episodes);
-    console.log(episodeSelected)
   }, [episodeSelected]);
   const screenWidth = Dimensions.get("window").width; // Lấy chiều rộng màn hình
   return (
@@ -43,7 +44,11 @@ export default function ViewMovieScreen({ route, navigation }: any) {
     >
       <HeaderComponent navigation={navigation} />
       <ScrollView style={{ flex: 1 }}>
-        <BreadcumbComponent navigation={navigation} name={movie?.name} episodeName={episodeSelected?.name}/>
+        <BreadcumbComponent
+          navigation={navigation}
+          name={movie?.name}
+          episodeName={episodeSelected?.name}
+        />
         <View style={{ marginTop: 12 }}>
           {/* Movies play */}
           <View
@@ -58,7 +63,7 @@ export default function ViewMovieScreen({ route, navigation }: any) {
               <SafeAreaView style={{ flex: 1 }}>
                 <WebView
                   source={{
-                    uri: episodeSelected?.link_embed,
+                    uri: episodeSelected?.link_embed || movie?.trailer_url,
                   }} // Sử dụng URL của video YouTube
                   style={{ width: screenWidth * 0.95, height: 250 }} // Áp dụng phong cách cho WebView
                   javaScriptEnabled={true} // Kích hoạt JavaScript
@@ -148,7 +153,7 @@ export default function ViewMovieScreen({ route, navigation }: any) {
               </View>
             )}
             {/* Rating */}
-            <RatingComponent />
+           {movie &&  <RatingComponent movie={movie} />}
             {/* Description Movie */}
             {movie && (
               <View
@@ -189,7 +194,7 @@ export default function ViewMovieScreen({ route, navigation }: any) {
             )}
           </View>
           {/* Comment */}
-          <CommentComponent />
+          {movie && <CommentComponent movie={movie} />}
           {/* Movie New */}
           <View style={{ marginTop: 12 }}>
             <View
@@ -211,9 +216,17 @@ export default function ViewMovieScreen({ route, navigation }: any) {
             </View>
             {/* List movies */}
             {movieNewUpdateSelector && (
-              <ListMoviesComponent movies={movieNewUpdateSelector?.slice(0, 16)}  navigation={navigation}/>
+              <ListMoviesComponent
+                movies={movieNewUpdateSelector?.slice(0, 16)}
+                navigation={navigation}
+              />
             )}
-            <TouchableOpacity  onPress={()=>navigation.navigate('ListMoviesScreen',{ typeSlugItem: {name:'Phim mới', slug:'phim-moi'}})}
+            <TouchableOpacity
+              onPress={() =>
+                navigation.navigate("ListMoviesScreen", {
+                  typeSlugItem: { name: "Phim mới", slug: "phim-moi" },
+                })
+              }
               style={{
                 alignSelf: "center",
                 backgroundColor: Colors.primary,

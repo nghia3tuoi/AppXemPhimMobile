@@ -8,11 +8,13 @@ import {
   ImageBackground,
 } from "react-native";
 
-export default function ListMoviesComponent({ movies,navigation }: any) {
+export default function ListMoviesComponent({ movies, navigation }: any) {
   const renderItemMovies = ({ item }: any) => {
     return (
       <TouchableOpacity
-      onPress={()=>navigation.navigate('MovieDetailScreen', {slug:item?.slug})}
+        onPress={() =>
+          navigation.navigate("MovieDetailScreen", { slug: item?.slug })
+        }
         style={{
           flex: 1,
           marginLeft: 12,
@@ -59,7 +61,7 @@ export default function ListMoviesComponent({ movies,navigation }: any) {
                 fontWeight: "bold",
                 marginTop: 6,
               }}
-                 numberOfLines={2}
+              numberOfLines={2}
               ellipsizeMode="tail"
             >
               {item?.origin_name}
@@ -71,13 +73,15 @@ export default function ListMoviesComponent({ movies,navigation }: any) {
   };
   return (
     <View style={{ marginTop: 12, marginLeft: -12 }}>
-      <FlatList
-        scrollEnabled={false}
-        data={movies}
-        keyExtractor={(item: any) => item?._id.toString()}
-        renderItem={renderItemMovies}
-        numColumns={2}
-      />
+      {movies && (
+        <FlatList
+          scrollEnabled={false}
+          data={movies}
+          keyExtractor={(item: any) => item?._id.toString()}
+          renderItem={renderItemMovies}
+          numColumns={2}
+        />
+      )}
     </View>
   );
 }

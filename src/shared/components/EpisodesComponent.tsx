@@ -10,7 +10,6 @@ export default function EpisodesComponent({
   const [indexSelected, SetIndexSelected] = useState(null);
   useEffect(() => {
     SetIndexSelected(indexSelectedProps);
-    console.log(indexSelected)
   }, [indexSelectedProps]);
   return (
     <View style={{ padding: 12, backgroundColor: Colors.bgPrimary }}>

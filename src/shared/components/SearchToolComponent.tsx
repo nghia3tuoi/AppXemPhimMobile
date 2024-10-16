@@ -9,8 +9,7 @@ import {
 } from "react-native";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { useSelector } from "react-redux";
-import useMovieApi from "@/src/core/hooks/useMovieApi";
-export default function SearchToolComponent() {
+export default function SearchToolComponent({handleGetMovies}:any) {
   const [sort, setSort] = useState<any>({
     name: "Thời gian đăng",
     slug: "modified.time",
@@ -30,24 +29,12 @@ export default function SearchToolComponent() {
   const categorySelector = useSelector(
     (state: any) => state.category?.categories
   );
-  const { getAllMovies } = useMovieApi();
+
 
   const years = [
     2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021,
     2022, 2023, 2024, 2025, 2026,
   ];
-
-  const handleGetMovies = async (
-    typeSlug: string = "phim-moi",
-    sortField: string = "modified.time",
-    categorySlug: string,
-    countrySlug: string,
-    year: string
-  ) => {
-    console.log(typeSlug, sortField, categorySlug, countrySlug, year);
-    await getAllMovies(typeSlug, sortField, categorySlug, countrySlug, year);
-  };
-
   const handleToggleSelectedSort = () => {
     setIsSelectedSort(!isSelectedSort);
     //
@@ -168,38 +155,38 @@ export default function SearchToolComponent() {
             >
               <TouchableHighlight
                 disabled={true}
-                onPressIn={() => {
+                onPress={() => {
                   handleToggleSelectedSort();
                 }}
                 style={{ padding: 12 }}
                 underlayColor={Colors.primary}
-                onPress={() => console.log(123)}
+              
               >
                 <Text style={{ color: Colors.textGrey, fontSize: 16 }}>
                   -- Sắp Xếp --
                 </Text>
               </TouchableHighlight>
               <TouchableHighlight
-                onPressIn={() => {
+                onPress={() => {
                   setSort({ name: "Thời gian đăng", slug: "modified.time" });
                   handleToggleSelectedSort();
                 }}
                 style={{ padding: 12 }}
                 underlayColor={Colors.primary}
-                onPress={() => console.log(123)}
+            
               >
                 <Text style={{ color: Colors.textWhite, fontSize: 16 }}>
                   Thời gian đăng
                 </Text>
               </TouchableHighlight>
               <TouchableHighlight
-                onPressIn={() => {
+                onPress={() => {
                   setSort({ name: "Năm Sản Xuất", slug: "year" });
                   handleToggleSelectedSort();
                 }}
                 style={{ padding: 12 }}
                 underlayColor={Colors.primary}
-                onPress={() => console.log(123)}
+               
               >
                 <Text style={{ color: Colors.textWhite, fontSize: 16 }}>
                   Năm Sản Xuất
@@ -238,52 +225,52 @@ export default function SearchToolComponent() {
               }}
             >
               <TouchableHighlight
-                onPressIn={() => {
+                onPress={() => {
                   setType({ name: "Phim Mới", slug: "phim-moi" });
                   handleToggleSelectedType();
                 }}
                 style={{ padding: 12 }}
                 underlayColor={Colors.primary}
-                onPress={() => console.log(123)}
+             
               >
                 <Text style={{ color: Colors.textWhite, fontSize: 16 }}>
                   Phim mới
                 </Text>
               </TouchableHighlight>
               <TouchableHighlight
-                onPressIn={() => {
+                onPress={() => {
                   setType({ name: "Phim Lẻ", slug: "phim-le" });
                   handleToggleSelectedType();
                 }}
                 style={{ padding: 12 }}
                 underlayColor={Colors.primary}
-                onPress={() => console.log(123)}
+             
               >
                 <Text style={{ color: Colors.textWhite, fontSize: 16 }}>
                   Phim Lẻ
                 </Text>
               </TouchableHighlight>
               <TouchableHighlight
-                onPressIn={() => {
+                onPress={() => {
                   setType({ name: "Phim Bộ", slug: "phim-bo" });
                   handleToggleSelectedType();
                 }}
                 style={{ padding: 12 }}
                 underlayColor={Colors.primary}
-                onPress={() => console.log(123)}
+             
               >
                 <Text style={{ color: Colors.textWhite, fontSize: 16 }}>
                   Phim Bộ
                 </Text>
               </TouchableHighlight>
               <TouchableHighlight
-                onPressIn={() => {
+                onPress={() => {
                   setType({ name: "Phim Hoạt Hình", slug: "hoat-hinh" });
                   handleToggleSelectedType();
                 }}
                 style={{ padding: 12 }}
                 underlayColor={Colors.primary}
-                onPress={() => console.log(123)}
+            
               >
                 <Text style={{ color: Colors.textWhite, fontSize: 16 }}>
                   Phim Hoạt Hình
@@ -484,7 +471,9 @@ export default function SearchToolComponent() {
       </View>
       {/* Button Search */}
       <TouchableOpacity
-        onPress={() => handleGetMovies(type?.slug, sort?.slug, category?.slug || "", country?.slug || "", year || "")}
+        onPress={() => {
+          handleGetMovies(type?.slug, sort?.slug, category?.slug || "", country?.slug || "", year || "", "")
+        }}
         style={{
           backgroundColor: Colors.primary,
           padding: 10,
